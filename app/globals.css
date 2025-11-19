@@ -18,60 +18,39 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Custom phone input styling */
-.phone-input-custom {
+/* Phone Input Styling */
+.phone-input {
+  border: 1px solid #ffffff;
   background: #000000;
-  border: 1px solid white;
+  display: flex;
+  align-items: center;
   padding: 1rem 1.5rem;
-  color: white;
-  text-align: center;
+  transition: all 0.3s;
 }
 
-.phone-input-custom .PhoneInputInput {
+.phone-input .PhoneInputInput {
   background: transparent;
   border: none;
-  color: white;
+  color: #ffffff;
+  text-align: left;
   outline: none;
-  text-align: center;
   font-size: 1rem;
+  flex: 1;
 }
 
-.phone-input-custom .PhoneInputInput::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+.phone-input .PhoneInputInput::placeholder {
+  color: #666666;
 }
 
-.phone-input-custom .PhoneInputInput:focus {
+.phone-input .PhoneInputCountrySelect {
+  background: transparent;
+  border: none;
+  color: #ffffff;
   outline: none;
-}
-
-.phone-input-custom .PhoneInputCountry {
+  cursor: pointer;
   margin-right: 0.5rem;
 }
 
-.phone-input-custom .PhoneInputCountrySelect {
-  background: transparent;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-.phone-input-custom .PhoneInputCountrySelect:focus {
-  outline: none;
-}
-
-.phone-input-custom .PhoneInputCountryIcon {
-  box-shadow: none;
-}
-
-.phone-input-custom:focus-within {
-  background: white;
-}
-
-.phone-input-custom:focus-within .PhoneInputInput,
-.phone-input-custom:focus-within .PhoneInputCountrySelect {
-  color: black;
-}
-
-.phone-input-custom:focus-within .PhoneInputInput::placeholder {
-  color: rgba(0, 0, 0, 0.5);
+.phone-input .PhoneInputCountryIcon {
+  margin-right: 0.5rem;
 }

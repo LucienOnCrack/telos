@@ -2,15 +2,17 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import TypewriterText from './components/TypewriterText';
-import RingingText from './components/RingingText';
+import { useForm } from '@formspree/react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import TypewriterText from './components/TypewriterText';
 
 export default function Home() {
-  const [currentScreen, setCurrentScreen] = useState<'intro' | 'doorOpening' | 'phone' | 'calling' | 'switchboard' | 'partyLine' | 'confirmation'>('intro');
+  const [currentScreen, setCurrentScreen] = useState<'intro' | 'phone' | 'switchboard' | 'partyLine' | 'confirmation'>('intro');
   const [showOptions, setShowOptions] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
+  const [submitError, setSubmitError] = useState('');
+  const [state, handleSubmit] = useForm('xanvjzwn');
 
   // Reset showOptions when entering switchboard screen
   useEffect(() => {
@@ -19,14 +21,21 @@ export default function Home() {
     }
   }, [currentScreen]);
 
+  // Auto-navigate to confirmation if submission succeeded
+  useEffect(() => {
+    if (state.succeeded && currentScreen === 'partyLine') {
+      setCurrentScreen('confirmation');
+    }
+  }, [state.succeeded, currentScreen]);
+
   // Confirmation screen
   if (currentScreen === 'confirmation') {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4">
         <TypewriterText 
           text="expect a call at 4pm"
-          speed={150}
-          jitter={40}
+          speed={50}
+          jitter={20}
           className="text-white text-xl text-center"
         />
       </div>
@@ -35,23 +44,27 @@ export default function Home() {
 
   // Party line screen with phone number input
   if (currentScreen === 'partyLine') {
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handlePhoneSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      
-      // Submit to getform.io
-      const formData = new FormData();
-      formData.append('phone', phoneNumber);
+      setSubmitError('');
       
       try {
-        await fetch('https://getform.io/f/YOUR_FORM_ENDPOINT', {
-          method: 'POST',
-          body: formData,
-        });
-        setCurrentScreen('confirmation');
+        // Submit to Formspree
+        const formData = new FormData();
+        formData.append('phone', phoneNumber || '');
+        formData.append('timestamp', new Date().toISOString());
+        
+        const result = await handleSubmit(formData as any);
+        
+        // Check if submission was successful
+        if (state.succeeded) {
+          // Navigate to confirmation
+          setCurrentScreen('confirmation');
+        } else if (state.errors) {
+          setSubmitError('failed to submit. please try again.');
+        }
       } catch (error) {
-        console.error('Error submitting form:', error);
-        // Still navigate even if there's an error
-        setCurrentScreen('confirmation');
+        setSubmitError('something went wrong. please try again.');
       }
     };
 
@@ -67,26 +80,38 @@ export default function Home() {
           />
           <TypewriterText 
             text="alright, let's get you on the list. what's your digits?"
-            speed={150}
-            jitter={40}
+            speed={50}
+            jitter={20}
             className="text-white text-xl text-center"
           />
-          <form onSubmit={handleSubmit} className="flex items-center gap-2 w-full max-w-md">
-            <PhoneInput
-              international
-              defaultCountry="US"
-              value={phoneNumber}
-              onChange={(value) => setPhoneNumber(value || '')}
-              placeholder="enter phone number"
-              className="phone-input-custom flex-1"
-            />
-            {phoneNumber && phoneNumber.length > 0 && (
-              <button
-                type="submit"
-                className="text-white text-2xl hover:opacity-70 transition-opacity cursor-pointer"
-              >
-                →
-              </button>
+          <form onSubmit={handlePhoneSubmit} className="flex flex-col items-center gap-4 w-full max-w-md">
+            <div className="flex items-center gap-2 w-full">
+              <div className="flex-1">
+                <PhoneInput
+                  international
+                  defaultCountry="US"
+                  value={phoneNumber}
+                  onChange={setPhoneNumber}
+                  placeholder="Enter phone number"
+                  className="phone-input"
+                  name="phone"
+                />
+              </div>
+              {phoneNumber && phoneNumber.length > 0 && (
+                <button
+                  type="submit"
+                  disabled={state.submitting}
+                  className="text-white text-2xl hover:opacity-70 transition-opacity cursor-pointer disabled:opacity-30"
+                >
+                  {state.submitting ? '...' : '→'}
+                </button>
+              )}
+            </div>
+            {submitError && (
+              <p className="text-red-500 text-sm">{submitError}</p>
+            )}
+            {state.errors && !submitError && (
+              <p className="text-red-500 text-sm">error submitting form. please try again.</p>
             )}
           </form>
         </div>
@@ -109,8 +134,8 @@ export default function Home() {
           />
           <TypewriterText 
             text="welcome to the telos house switchboard, how can i help you today"
-            speed={150}
-            jitter={40}
+            speed={50}
+            jitter={20}
             className="text-white text-xl text-center"
             onDone={() => {
               setTimeout(() => setShowOptions(true), 800);
@@ -140,43 +165,6 @@ export default function Home() {
     );
   }
 
-  // Door opening screen
-  if (currentScreen === 'doorOpening') {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <TypewriterText 
-          text="[ *door opens* ]"
-          speed={150}
-          jitter={40}
-          className="text-white text-xl"
-          onDone={() => {
-            setTimeout(() => {
-              setCurrentScreen('phone');
-            }, 1500);
-          }}
-        />
-      </div>
-    );
-  }
-
-  // Calling screen with ringing sound
-  if (currentScreen === 'calling') {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="flex flex-col items-center gap-8">
-          <Image 
-            src="/images/phone-removebg-preview.png" 
-            alt="Phone"
-            width={150}
-            height={150}
-            priority
-          />
-          <RingingText onDone={() => setCurrentScreen('switchboard')} />
-        </div>
-      </div>
-    );
-  }
-
   // Phone screen with call button
   if (currentScreen === 'phone') {
     return (
@@ -190,7 +178,7 @@ export default function Home() {
             priority
           />
           <button 
-            onClick={() => setCurrentScreen('calling')}
+            onClick={() => setCurrentScreen('switchboard')}
             className="border border-white text-white px-8 py-3 hover:bg-white hover:text-black transition-colors cursor-pointer"
           >
             call
@@ -212,7 +200,7 @@ export default function Home() {
           priority
         />
         <button 
-          onClick={() => setCurrentScreen('doorOpening')}
+          onClick={() => setCurrentScreen('phone')}
           className="border border-white text-white px-8 py-3 hover:bg-white hover:text-black transition-colors cursor-pointer"
         >
           enter
