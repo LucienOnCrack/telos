@@ -55,7 +55,11 @@ export default function Home() {
             priority
           />
           <TypewriterText 
-            text="the convoy has arrived & we're opening up the house\n\njoin us for an intimate gathering before the final thursday blowout\n\nif you can find us"
+            text={`the convoy has arrived & we're opening up the house
+
+join us for an intimate gathering before the final thursday blowout
+
+if you can find us`}
             speed={50}
             jitter={20}
             className="text-white text-xl text-center"
