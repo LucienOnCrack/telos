@@ -37,10 +37,14 @@ export default function Home() {
   if (currentScreen === 'confirmation') {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4">
-        <TypewriterText 
-          text="expect a call at 4pm"
+        <SequentialTypewriter 
+          lines={[
+            'expect a call at 4pm',
+            'bring a friend, share this link'
+          ]}
           speed={50}
           jitter={20}
+          delayBetweenLines={1000}
           className="text-white text-xl text-center"
         />
       </div>
@@ -124,7 +128,7 @@ export default function Home() {
             priority
           />
           <TypewriterText 
-            text="alright, let's get you on the list. what's your digits?"
+            text="input your number and we'll be in touch."
             speed={50}
             jitter={20}
             className="text-white text-xl text-center"
