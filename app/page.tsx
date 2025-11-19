@@ -48,7 +48,7 @@ export default function Home() {
           delayBetweenLines={1000}
           className="text-white text-xl text-center"
           onDone={() => {
-            setTimeout(() => setShowShutters(true), 1000);
+            setTimeout(() => setShowShutters(true), 300);
           }}
         />
         {showShutters && (

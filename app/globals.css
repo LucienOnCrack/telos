@@ -25,17 +25,17 @@ body {
   right: 0;
   height: 0;
   background: #ff0000;
-  z-index: 50;
+  z-index: 9999;
 }
 
 .shutter-top {
   top: 0;
-  animation: closeTop 4s ease-in-out forwards;
+  animation: closeTop 6s ease-in-out forwards;
 }
 
 .shutter-bottom {
   bottom: 0;
-  animation: closeBottom 4s ease-in-out forwards;
+  animation: closeBottom 6s ease-in-out forwards;
 }
 
 @keyframes closeTop {
