@@ -12,6 +12,7 @@ export default function Home() {
   const [currentScreen, setCurrentScreen] = useState<'phone' | 'switchboard' | 'announcement' | 'confirmation'>('phone');
   const [showOptions, setShowOptions] = useState(false);
   const [showPhoneInput, setShowPhoneInput] = useState(false);
+  const [showShutters, setShowShutters] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
   const [submitError, setSubmitError] = useState('');
   const [state, handleSubmit] = useForm('xanvjzwn');
@@ -46,7 +47,16 @@ export default function Home() {
           jitter={20}
           delayBetweenLines={1000}
           className="text-white text-xl text-center"
+          onDone={() => {
+            setTimeout(() => setShowShutters(true), 1000);
+          }}
         />
+        {showShutters && (
+          <>
+            <div className="shutter shutter-top" />
+            <div className="shutter shutter-bottom" />
+          </>
+        )}
       </div>
     );
   }
