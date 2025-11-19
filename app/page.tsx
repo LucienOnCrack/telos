@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import TypewriterText from './components/TypewriterText';
 import RingingText from './components/RingingText';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 export default function Home() {
   const [currentScreen, setCurrentScreen] = useState<'intro' | 'doorOpening' | 'phone' | 'calling' | 'switchboard' | 'partyLine' | 'confirmation'>('intro');
@@ -33,6 +35,26 @@ export default function Home() {
 
   // Party line screen with phone number input
   if (currentScreen === 'partyLine') {
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      
+      // Submit to getform.io
+      const formData = new FormData();
+      formData.append('phone', phoneNumber);
+      
+      try {
+        await fetch('https://getform.io/f/YOUR_FORM_ENDPOINT', {
+          method: 'POST',
+          body: formData,
+        });
+        setCurrentScreen('confirmation');
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        // Still navigate even if there's an error
+        setCurrentScreen('confirmation');
+      }
+    };
+
     return (
       <div className="min-h-screen bg-black flex items-center justify-center px-4">
         <div className="flex flex-col items-center gap-8 max-w-2xl w-full">
@@ -49,23 +71,24 @@ export default function Home() {
             jitter={40}
             className="text-white text-xl text-center"
           />
-          <div className="flex items-center gap-2 w-full max-w-md">
-            <input
-              type="tel"
+          <form onSubmit={handleSubmit} className="flex items-center gap-2 w-full max-w-md">
+            <PhoneInput
+              international
+              defaultCountry="US"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={(value) => setPhoneNumber(value || '')}
               placeholder="enter phone number"
-              className="bg-black border border-white text-white px-6 py-4 text-center focus:outline-none focus:bg-white focus:text-black transition-colors flex-1"
+              className="phone-input-custom flex-1"
             />
-            {phoneNumber.length > 0 && (
+            {phoneNumber && phoneNumber.length > 0 && (
               <button
-                onClick={() => setCurrentScreen('confirmation')}
+                type="submit"
                 className="text-white text-2xl hover:opacity-70 transition-opacity cursor-pointer"
               >
                 →
               </button>
             )}
-          </div>
+          </form>
         </div>
       </div>
     );
