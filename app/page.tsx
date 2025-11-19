@@ -8,7 +8,7 @@ import 'react-phone-number-input/style.css';
 import TypewriterText from './components/TypewriterText';
 
 export default function Home() {
-  const [currentScreen, setCurrentScreen] = useState<'phone' | 'switchboard' | 'partyLine' | 'confirmation'>('phone');
+  const [currentScreen, setCurrentScreen] = useState<'phone' | 'switchboard' | 'announcement' | 'partyLine' | 'confirmation'>('phone');
   const [showOptions, setShowOptions] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
   const [submitError, setSubmitError] = useState('');
@@ -38,6 +38,32 @@ export default function Home() {
           jitter={20}
           className="text-white text-xl text-center"
         />
+      </div>
+    );
+  }
+
+  // Announcement screen
+  if (currentScreen === 'announcement') {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center px-4">
+        <div className="flex flex-col items-center gap-8 max-w-2xl w-full">
+          <Image 
+            src="/images/phone-removebg-preview.png" 
+            alt="Phone"
+            width={250}
+            height={250}
+            priority
+          />
+          <TypewriterText 
+            text="the convoy has arrived & we're opening up the house\n\njoin us for an intimate gathering before the final thursday blowout\n\nif you can find us"
+            speed={50}
+            jitter={20}
+            className="text-white text-xl text-center"
+            onDone={() => {
+              setTimeout(() => setCurrentScreen('partyLine'), 1000);
+            }}
+          />
+        </div>
       </div>
     );
   }
@@ -144,7 +170,7 @@ export default function Home() {
           {showOptions && (
             <div className="grid grid-cols-2 gap-4 w-full">
               <button 
-                onClick={() => setCurrentScreen('partyLine')}
+                onClick={() => setCurrentScreen('announcement')}
                 className="border border-white text-white px-6 py-4 hover:bg-white hover:text-black transition-colors cursor-pointer"
               >
                 yes
