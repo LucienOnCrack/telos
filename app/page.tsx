@@ -10,14 +10,18 @@ import TypewriterText from './components/TypewriterText';
 export default function Home() {
   const [currentScreen, setCurrentScreen] = useState<'phone' | 'switchboard' | 'announcement' | 'partyLine' | 'confirmation'>('phone');
   const [showOptions, setShowOptions] = useState(false);
+  const [showArrow, setShowArrow] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
   const [submitError, setSubmitError] = useState('');
   const [state, handleSubmit] = useForm('xanvjzwn');
 
-  // Reset showOptions when entering switchboard or phone screen
+  // Reset showOptions and showArrow when changing screens
   useEffect(() => {
     if (currentScreen === 'switchboard' || currentScreen === 'phone') {
       setShowOptions(false);
+    }
+    if (currentScreen === 'announcement') {
+      setShowArrow(false);
     }
   }, [currentScreen]);
 
@@ -64,9 +68,17 @@ if you can find us`}
             jitter={20}
             className="text-white text-xl text-center"
             onDone={() => {
-              setTimeout(() => setCurrentScreen('partyLine'), 1000);
+              setTimeout(() => setShowArrow(true), 1000);
             }}
           />
+          {showArrow && (
+            <button
+              onClick={() => setCurrentScreen('partyLine')}
+              className="text-white text-4xl hover:opacity-70 transition-opacity cursor-pointer"
+            >
+              →
+            </button>
+          )}
         </div>
       </div>
     );
