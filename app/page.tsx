@@ -9,26 +9,26 @@ import TypewriterText from './components/TypewriterText';
 import SequentialTypewriter from './components/SequentialTypewriter';
 
 export default function Home() {
-  const [currentScreen, setCurrentScreen] = useState<'phone' | 'switchboard' | 'announcement' | 'partyLine' | 'confirmation'>('phone');
+  const [currentScreen, setCurrentScreen] = useState<'phone' | 'switchboard' | 'announcement' | 'confirmation'>('phone');
   const [showOptions, setShowOptions] = useState(false);
-  const [showArrow, setShowArrow] = useState(false);
+  const [showPhoneInput, setShowPhoneInput] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
   const [submitError, setSubmitError] = useState('');
   const [state, handleSubmit] = useForm('xanvjzwn');
 
-  // Reset showOptions and showArrow when changing screens
+  // Reset showOptions and showPhoneInput when changing screens
   useEffect(() => {
     if (currentScreen === 'switchboard' || currentScreen === 'phone') {
       setShowOptions(false);
     }
     if (currentScreen === 'announcement') {
-      setShowArrow(false);
+      setShowPhoneInput(false);
     }
   }, [currentScreen]);
 
   // Auto-navigate to confirmation if submission succeeded
   useEffect(() => {
-    if (state.succeeded && currentScreen === 'partyLine') {
+    if (state.succeeded && currentScreen === 'announcement') {
       setCurrentScreen('confirmation');
     }
   }, [state.succeeded, currentScreen]);
@@ -40,7 +40,7 @@ export default function Home() {
         <SequentialTypewriter 
           lines={[
             'expect a call at 4pm',
-            'bring a friend, share this link'
+            'bring a friend'
           ]}
           speed={50}
           jitter={20}
@@ -51,48 +51,8 @@ export default function Home() {
     );
   }
 
-  // Announcement screen
+  // Announcement screen with phone input
   if (currentScreen === 'announcement') {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center px-4">
-        <div className="flex flex-col items-center gap-8 max-w-2xl w-full">
-          <Image 
-            src="/images/phone-removebg-preview.png" 
-            alt="Phone"
-            width={250}
-            height={250}
-            priority
-          />
-          <SequentialTypewriter 
-            lines={[
-              'the convoy has arrived',
-              'the house is now open',
-              'join us for an intimate gathering before the final thursday blowout',
-              '…if you can find us'
-            ]}
-            speed={50}
-            jitter={20}
-            delayBetweenLines={1000}
-            className="text-white text-xl text-center"
-            onDone={() => {
-              setTimeout(() => setShowArrow(true), 1000);
-            }}
-          />
-          {showArrow && (
-            <button
-              onClick={() => setCurrentScreen('partyLine')}
-              className="text-white text-4xl hover:opacity-70 transition-opacity cursor-pointer"
-            >
-              →
-            </button>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // Party line screen with phone number input
-  if (currentScreen === 'partyLine') {
     const handlePhoneSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       setSubmitError('');
@@ -127,42 +87,53 @@ export default function Home() {
             height={250}
             priority
           />
-          <TypewriterText 
-            text="input your number and we'll be in touch."
+          <SequentialTypewriter 
+            lines={[
+              'congratulations',
+              "you've begun the journey",
+              'we hope you make the right choices',
+              "input your number to continue",
+            ]}
             speed={50}
             jitter={20}
+            delayBetweenLines={1000}
             className="text-white text-xl text-center"
+            onDone={() => {
+              setTimeout(() => setShowPhoneInput(true), 1000);
+            }}
           />
-          <form onSubmit={handlePhoneSubmit} className="flex flex-col items-center gap-4 w-full max-w-md">
-            <div className="flex items-center gap-2 w-full">
-              <div className="flex-1">
-                <PhoneInput
-                  international
-                  defaultCountry="US"
-                  value={phoneNumber}
-                  onChange={setPhoneNumber}
-                  placeholder="Enter phone number"
-                  className="phone-input"
-                  name="phone"
-                />
+          {showPhoneInput && (
+            <form onSubmit={handlePhoneSubmit} className="flex flex-col items-center gap-4 w-full max-w-md">
+              <div className="flex items-center gap-2 w-full">
+                <div className="flex-1">
+                  <PhoneInput
+                    international
+                    defaultCountry="US"
+                    value={phoneNumber}
+                    onChange={setPhoneNumber}
+                    placeholder="Enter phone number"
+                    className="phone-input"
+                    name="phone"
+                  />
+                </div>
+                {phoneNumber && phoneNumber.length > 0 && (
+                  <button
+                    type="submit"
+                    disabled={state.submitting}
+                    className="text-white text-2xl hover:opacity-70 transition-opacity cursor-pointer disabled:opacity-30"
+                  >
+                    {state.submitting ? '...' : '→'}
+                  </button>
+                )}
               </div>
-              {phoneNumber && phoneNumber.length > 0 && (
-                <button
-                  type="submit"
-                  disabled={state.submitting}
-                  className="text-white text-2xl hover:opacity-70 transition-opacity cursor-pointer disabled:opacity-30"
-                >
-                  {state.submitting ? '...' : '→'}
-                </button>
+              {submitError && (
+                <p className="text-red-500 text-sm">{submitError}</p>
               )}
-            </div>
-            {submitError && (
-              <p className="text-red-500 text-sm">{submitError}</p>
-            )}
-            {state.errors && !submitError && (
-              <p className="text-red-500 text-sm">error submitting form. please try again.</p>
-            )}
-          </form>
+              {state.errors && !submitError && (
+                <p className="text-red-500 text-sm">error submitting form. please try again.</p>
+              )}
+            </form>
+          )}
         </div>
       </div>
     );
