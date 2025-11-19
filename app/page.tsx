@@ -8,15 +8,15 @@ import 'react-phone-number-input/style.css';
 import TypewriterText from './components/TypewriterText';
 
 export default function Home() {
-  const [currentScreen, setCurrentScreen] = useState<'intro' | 'phone' | 'switchboard' | 'partyLine' | 'confirmation'>('intro');
+  const [currentScreen, setCurrentScreen] = useState<'phone' | 'switchboard' | 'partyLine' | 'confirmation'>('phone');
   const [showOptions, setShowOptions] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
   const [submitError, setSubmitError] = useState('');
   const [state, handleSubmit] = useForm('xanvjzwn');
 
-  // Reset showOptions when entering switchboard screen
+  // Reset showOptions when entering switchboard or phone screen
   useEffect(() => {
-    if (currentScreen === 'switchboard') {
+    if (currentScreen === 'switchboard' || currentScreen === 'phone') {
       setShowOptions(false);
     }
   }, [currentScreen]);
@@ -74,8 +74,8 @@ export default function Home() {
           <Image 
             src="/images/phone-removebg-preview.png" 
             alt="Phone"
-            width={150}
-            height={150}
+            width={250}
+            height={250}
             priority
           />
           <TypewriterText 
@@ -128,12 +128,12 @@ export default function Home() {
           <Image 
             src="/images/phone-removebg-preview.png" 
             alt="Phone"
-            width={150}
-            height={150}
+            width={250}
+            height={250}
             priority
           />
           <TypewriterText 
-            text="welcome to the telos house switchboard, how can i help you today"
+            text="welcome to the telos house switchboard, would you like to proceed?"
             speed={50}
             jitter={20}
             className="text-white text-xl text-center"
@@ -143,20 +143,17 @@ export default function Home() {
           />
           {showOptions && (
             <div className="grid grid-cols-2 gap-4 w-full">
-              <button className="border border-white text-white px-6 py-4 hover:bg-white hover:text-black transition-colors cursor-pointer">
-                What is telos house?
-              </button>
-              <button className="border border-white text-white px-6 py-4 hover:bg-white hover:text-black transition-colors cursor-pointer">
-                Who are you?
-              </button>
-              <button className="border border-white text-white px-6 py-4 hover:bg-white hover:text-black transition-colors cursor-pointer">
-                ?
-              </button>
               <button 
                 onClick={() => setCurrentScreen('partyLine')}
                 className="border border-white text-white px-6 py-4 hover:bg-white hover:text-black transition-colors cursor-pointer"
               >
-                I want to party
+                yes
+              </button>
+              <button 
+                onClick={() => setCurrentScreen('phone')}
+                className="border border-white text-white px-6 py-4 hover:bg-white hover:text-black transition-colors cursor-pointer"
+              >
+                no
               </button>
             </div>
           )}
@@ -173,39 +170,20 @@ export default function Home() {
           <Image 
             src="/images/phone-removebg-preview.png" 
             alt="Phone"
-            width={150}
-            height={150}
+            width={250}
+            height={250}
             priority
           />
           <button 
             onClick={() => setCurrentScreen('switchboard')}
             className="border border-white text-white px-8 py-3 hover:bg-white hover:text-black transition-colors cursor-pointer"
           >
-            call
+            answer the call
           </button>
         </div>
       </div>
     );
   }
 
-  // Initial screen with red phone box
-  return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="flex flex-col items-center gap-8">
-        <Image 
-          src="/images/telephone.png" 
-          alt="Telephone"
-          width={150}
-          height={150}
-          priority
-        />
-        <button 
-          onClick={() => setCurrentScreen('phone')}
-          className="border border-white text-white px-8 py-3 hover:bg-white hover:text-black transition-colors cursor-pointer"
-        >
-          enter
-        </button>
-      </div>
-    </div>
-  );
 }
+
