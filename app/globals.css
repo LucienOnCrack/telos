@@ -24,18 +24,18 @@ body {
   left: 0;
   right: 0;
   height: 0;
-  background: #000000;
+  background: #ff0000;
   z-index: 50;
 }
 
 .shutter-top {
   top: 0;
-  animation: closeTop 2s ease-in-out forwards;
+  animation: closeTop 4s ease-in-out forwards;
 }
 
 .shutter-bottom {
   bottom: 0;
-  animation: closeBottom 2s ease-in-out forwards;
+  animation: closeBottom 4s ease-in-out forwards;
 }
 
 @keyframes closeTop {
