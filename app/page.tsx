@@ -6,6 +6,7 @@ import { useForm } from '@formspree/react';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import TypewriterText from './components/TypewriterText';
+import SequentialTypewriter from './components/SequentialTypewriter';
 
 export default function Home() {
   const [currentScreen, setCurrentScreen] = useState<'phone' | 'switchboard' | 'announcement' | 'partyLine' | 'confirmation'>('phone');
@@ -58,14 +59,16 @@ export default function Home() {
             height={250}
             priority
           />
-          <TypewriterText 
-            text={`the convoy has arrived & we're opening up the house
-
-join us for an intimate gathering before the final thursday blowout
-
-if you can find us`}
+          <SequentialTypewriter 
+            lines={[
+              'the convoy has arrived',
+              'the house is now open',
+              'join us for an intimate gathering before the final thursday blowout',
+              '…if you can find us'
+            ]}
             speed={50}
             jitter={20}
+            delayBetweenLines={1000}
             className="text-white text-xl text-center"
             onDone={() => {
               setTimeout(() => setShowArrow(true), 1000);
