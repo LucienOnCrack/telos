@@ -40,8 +40,8 @@ export default function Home() {
       <div className="min-h-screen bg-black flex items-center justify-center px-4">
         <SequentialTypewriter 
           lines={[
-            'expect a call at 4pm',
-            'bring a friend'
+            'good choice',
+            'expect a call at 4pm'
           ]}
           speed={50}
           jitter={20}
