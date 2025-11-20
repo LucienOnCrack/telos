@@ -41,7 +41,7 @@ export default function Home() {
         <SequentialTypewriter 
           lines={[
             'good choice',
-            'expect a call at 4pm'
+            'expect a call at 1600'
           ]}
           speed={50}
           jitter={20}
